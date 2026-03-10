@@ -12,18 +12,18 @@ export class ImagesService {
   ) {}
 
   async getImagesByCountry(country: string): Promise<ImagesResponseDto> {
-    const accessKey = this.configService.get<string>('UNSPLASH_ACCESS_KEY');
+    const apiKey = this.configService.get<string>('PEXELS_API_KEY');
 
     try {
       const { data } = await firstValueFrom(
-        this.httpService.get('https://api.unsplash.com/search/photos', {
+        this.httpService.get('https://api.pexels.com/v1/search', {
           params: { query: country, per_page: 6 },
-          headers: { Authorization: `Client-ID ${accessKey}` },
+          headers: { Authorization: apiKey },
         }),
       );
 
-      const images: string[] = data.results.map(
-        (photo: { urls: { regular: string } }) => photo.urls.regular,
+      const images: string[] = data.photos.map(
+        (photo: { src: { large: string } }) => photo.src.large,
       );
 
       return { images };
